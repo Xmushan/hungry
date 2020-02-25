@@ -42,10 +42,34 @@
           <!-- clearfix 清除浮动 -->
           <div class="detail-wrapper clearfix">
               <div class="detail-main">
-                <div class="name">{{seller.name}}</div>
+                <h1 class="name">{{seller.name}}</h1>
+                <!-- 星星 待修改 -->
                 <span class="score"></span>
+                <!-- 优惠详情区域 -->
+                <div class="title">
+                  <div class="line"></div>
+                  <div class="text">优惠信息</div>
+                  <div class="line"></div>
+                </div>
+                <ul v-if="seller.supports" class="supports">
+                  <li class="support-item" v-for="item in seller.supports" :key="item.type">
+                    <span class="icon"><img :src="imgPath[item.type]" alt=""></span>
+                    <span class="text">{{item.description}}</span>
+                  </li>
+                </ul>
+                <!-- 商家信息 -->
+                <div class="title">
+                  <div class="line"></div>
+                  <div class="text">商家公告</div>
+                  <div class="line"></div>
+                </div>
+                <!-- 商家介绍 -->
+                <div class="bulletin">
+                  <div class="content">{{seller.bulletin}}</div>
+                </div>
               </div>
           </div>
+          <!-- 关闭按钮 -->
           <div class="detail-close" @click="detailShow=false">
             <i class="fa fa-times-circle fa-2x" aria-hidden="true"></i>
           </div>
@@ -63,7 +87,16 @@ export default {
   data () {
     return {
       seller: {},
-      detailShow: true
+      detailShow: false,
+      // Vue 的 大坑
+      // 当动态绑定img的src的时候，vue数据绑定图片的相对路径或者是绝对路径的时候，需要require路径
+      imgPath: [
+        require('./img/decrease_1@2x.png'),
+        require('./img/discount_1@2x.png'),
+        require('./img/guarantee_1@2x.png'),
+        require('./img/invoice_1@2x.png'),
+        require('./img/special_1@2x.png')
+      ]
     }
   },
   created () {
@@ -200,7 +233,7 @@ export default {
         position: absolute;
         font-size: 16px;
         right: 6px;
-        top: 3px;
+        top: 1px;
     }
   }
   .background{
@@ -241,6 +274,60 @@ export default {
           background-repeat: no-repeat;
           background-position-y: -54px;
           background-size: 98px;
+          margin-top: 18px;
+          margin-left: 138px;
+        }
+        .title{
+          display: flex;
+          width: 80%;
+          margin: 28px auto 24px auto;
+          .line{
+            flex: 1;
+            position: relative;
+            top: -6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+          }
+          .text{
+            padding: 0 12px;
+            font-size: 14px;
+            font-weight: 700;
+          }
+        }
+        .supports{
+          width: 80%;
+          margin: 0 auto;
+          .support-item{
+            padding: 0 12px;
+            margin-bottom: 12px;
+            font-size: 0;
+            &:last-child{
+              margin-bottom: 0;
+            }
+            .icon{
+              display: inline-block;
+              width: 16px;
+              height: 16px;
+              vertical-align: top;
+              margin-right: 6px;
+              img{
+                width: 16px;
+                height: 16px;
+              }
+            }
+            .text{
+              line-height: 16px;
+              font-size: 12px;
+            }
+          }
+        }
+        .bulletin{
+          width: 80%;
+          margin: 0 auto;
+          .content{
+            padding: 0 12px;
+            line-height: 24px;
+            font-size: 12px;
+          }
         }
       }
     }
