@@ -3,9 +3,10 @@
     <!-- 左侧菜单 -->
     <div class="menu-wrapper" ref='menu'>
         <ul>
-            <li class="menu-item" v-for="(item,index) in GoodsList" :key="index">
+            <li @click="selectMenu(index)" class="menu-item" :class="{'current' : currentIndex === index}" v-for="(item,index) in GoodsList" :key="index">
                 <span class="text">
-                    <img  v-show="item.type>0" :src="imgPath[index]" alt="">
+                    <img  v-show="item.type===2" :src="imgPath[0]" alt="">
+                    <img  v-show="item.type===1" :src="imgPath[1]" alt="">
                     {{item.name}}
                 </span>
             </li>
@@ -50,38 +51,81 @@ export default {
       imgPath: [
         require('./img/discount_1@2x.png'),
         require('./img/special_1@2x.png')
-      ]
+      ],
+      listHeight: [],
+      scrollY: 0
     }
   },
   created () {
     this.getGoods()
+  },
+  computed: {
+    currentIndex () {
+      for (let i = 0; i < this.listHeight.length; i++) {
+        const height1 = this.listHeight[i]
+        const height2 = this.listHeight[i + 1]
+        if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
+          return i
+        }
+      }
+      return 0
+    }
   },
   methods: {
     getGoods () {
       this.$http.get('data.json').then(res => {
         this.GoodsList = res.data.goods
         console.log(this.GoodsList)
+        this.$nextTick(() => {
+          this.initScollMenu()
+          this.calculateHeight()
+        })
       })
     },
+    selectMenu (index) {
+      const foodList = this.$refs.food.getElementsByClassName('food-list-hook')
+      const el = foodList[index]
+      this.food.scrollToElement(el, 300)
+    },
+    // 计算每一个 li 的高度
+    calculateHeight () {
+      const foodList = this.$refs.food.getElementsByClassName('food-list-hook')
+      let height = 0
+      this.listHeight.push(height)
+      for (let i = 0; i < foodList.length; i++) {
+        const item = foodList[i]
+        height += item.clientHeight
+        this.listHeight.push(height)
+      }
+    },
     initScollMenu () {
-      this.$nextTick(() => {
-        if (!this.Scroll) {
-          this.Scroll = new BScroll(this.$refs.menu, {
-            click: true,
-            scrollY: true
-          })
-          this.Scroll = new BScroll(this.$refs.food, {
-            click: true,
-            scrollY: true
-          })
-        }
+    //   this.$nextTick(() => {
+    //     if (!this.Scroll) {
+    //       this.Scroll = new BScroll(this.$refs.menu, {
+    //         click: true,
+    //         scrollY: true
+    //       })
+    //       this.Scroll = new BScroll(this.$refs.food, {
+    //         click: true,
+    //         scrollY: true
+    //       })
+    //     }
+    //   })
+      this.menu = new BScroll(this.$refs.menu, {
+        click: true
+      })
+      this.food = new BScroll(this.$refs.food, {
+        probeType: 3
+      })
+      this.food.on('scroll', (pos) => {
+        this.scrollY = Math.abs(Math.round(pos.y))
       })
     }
-  },
-  // 生命周期函数 必须在 获取数据 和 DOM 渲染完成 之后 在调用定义的 initScroll方法 否则无法滚动
-  mounted () {
-    this.initScollMenu()
   }
+  // 生命周期函数 必须在 获取数据 和 DOM 渲染完成 之后 在调用定义的 initScroll方法 否则无法滚动
+  //   mounted () {
+  //     this.initScollMenu()
+  //   }
 
 }
 </script>
@@ -104,6 +148,16 @@ export default {
             height: 54px;
             line-height: 14px;
             padding: 0 12px;
+            &.current{
+                position: relative;
+                z-index: 10;
+                margin-top: -1px;
+                background-color: white;
+                font-weight: 700;
+                .text{
+                    border: none;
+                }
+            }
             .text{
                 display: table-cell;
                 width: 80px;
@@ -157,6 +211,7 @@ export default {
                 }
                 .desc{
                     margin-bottom: 8px;
+                    line-height: 12px;
                 }
                 .extra{
                     line-height: 10px;
