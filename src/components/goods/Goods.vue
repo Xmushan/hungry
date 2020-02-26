@@ -33,21 +33,28 @@
                                 <span class="now">￥{{food.price}}</span>
                                 <span class="old" v-show="food.oldPrice">{{food.oldPrice}}</span>
                             </div>
+                              <control :food='food'></control>
                         </div>
                     </li>
                 </ul>
             </li>
         </ul>
     </div>
+    <!-- 购物车组件 -->
+      <shopcart :select-foods="selectFoods" :delivery-price='seller.deliveryPrice' :min-price='seller.minPrice'>
+      </shopcart>
 </div>
 </template>
 
 <script>
 import BScroll from 'better-scroll'
+import shopcart from '../shopcart/ShopCart.vue'
+import control from '../cartcontrol/CartControl.vue'
 export default {
   data () {
     return {
       GoodsList: [],
+      seller: {},
       imgPath: [
         require('./img/discount_1@2x.png'),
         require('./img/special_1@2x.png')
@@ -69,13 +76,25 @@ export default {
         }
       }
       return 0
+    },
+    selectFoods () {
+      const foods = []
+      this.GoodsList.forEach((good) => {
+        good.foods.forEach((food) => {
+          if (food.count) {
+            foods.push(food)
+          }
+        })
+      })
+      return foods
     }
   },
   methods: {
     getGoods () {
       this.$http.get('data.json').then(res => {
         this.GoodsList = res.data.goods
-        console.log(this.GoodsList)
+        this.seller = res.data.seller
+        console.log(this.seller)
         this.$nextTick(() => {
           this.initScollMenu()
           this.calculateHeight()
@@ -115,17 +134,18 @@ export default {
         click: true
       })
       this.food = new BScroll(this.$refs.food, {
+        click: true,
         probeType: 3
       })
       this.food.on('scroll', (pos) => {
         this.scrollY = Math.abs(Math.round(pos.y))
       })
     }
+  },
+  components: {
+    shopcart,
+    control
   }
-  // 生命周期函数 必须在 获取数据 和 DOM 渲染完成 之后 在调用定义的 initScroll方法 否则无法滚动
-  //   mounted () {
-  //     this.initScollMenu()
-  //   }
 
 }
 </script>
@@ -222,6 +242,7 @@ export default {
                 .price{
                     font-weight: 700;
                     line-height: 24px;
+                    display: inline-block;
                     .now{
                         color: red;
                         margin-right: 8px;
@@ -232,6 +253,11 @@ export default {
                         font-size: 10px;
                         color: rgba(7, 17, 27,0.8);
                     }
+                }
+                .control-wrapper{
+                  position: absolute;
+                  right: 0;
+                  bottom: 12px;
                 }
             }
         }
