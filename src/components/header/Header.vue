@@ -38,7 +38,8 @@
           <img width="100%" height="100%" :src="seller.avatar" alt="">
         </div>
         <!-- 店家详情 -->
-        <div class="detail" v-show="detailShow">
+        <transition name="fade">
+          <div class="detail" v-show="detailShow">
           <!-- clearfix 清除浮动 -->
           <div class="detail-wrapper clearfix">
               <div class="detail-main">
@@ -74,6 +75,7 @@
             <i class="fa fa-times-circle fa-2x" aria-hidden="true"></i>
           </div>
         </div>
+        </transition>
     </div>
 </template>
 
@@ -114,6 +116,12 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.fade-enter,.fade-leave-to{
+  opacity: 0;
+}
+.fade-enter-active,.fade-leave-active{
+  transition: all 0.5s ease;
+}
 .clearfix{
   display: inline-block;
   &:after{

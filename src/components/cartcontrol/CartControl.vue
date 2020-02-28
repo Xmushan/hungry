@@ -1,8 +1,12 @@
 <template>
     <div class="control">
+      <transition name="fade">
         <div @click="decrease" class="decrease " v-show="food.count>0">
+          <transition name="inner">
             <span class="inner fa fa-minus-circle"></span>
+          </transition>
         </div>
+      </transition>
         <div class="count" v-show="food.count>0">{{food.count}}</div>
         <div class="add fa fa-plus-circle" @click="addCart"></div>
     </div>
@@ -36,6 +40,19 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.fade-enter,.fade-leave-to{
+  opacity: 0;
+  transform: translateX(20px);
+}
+.fade-enter-active,.fade-leave-active{
+  transition: 0.5s all ease;
+}
+.inner-enter,.inner-leave-to{
+  transform: rotate(360deg);
+}
+.inner-enter-active,.inner-leave-active{
+  transition: 0.5s all ease-in-out;
+}
 .control{
     font-size: 0;
     display: inline-block;
@@ -50,8 +67,6 @@ export default {
             line-height: 24px;
             font-size: 24px;
             color: rgb(0, 160, 220);
-            transition: all 0.4s linear;
-            transform: rotate(0);
         }
     }
     .count{

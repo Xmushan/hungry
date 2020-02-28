@@ -18,8 +18,8 @@
             <li class="food-list food-list-hook" v-for="(item,index) in GoodsList" :key="index">
                 <h1 class="title">{{item.name}}</h1>
                 <ul >
-                    <li class="food-item" v-for="(food,index) in item.foods" :key="index">
-                        <div class="icon">
+                    <li class="food-item" v-for="(food,index) in item.foods" :key="index" >
+                        <div class="icon" @click="clickFood(food)">
                             <img width="57px" height="57px" :src="food.icon" alt="">
                         </div>
                         <div class="content">
@@ -33,7 +33,10 @@
                                 <span class="now">￥{{food.price}}</span>
                                 <span class="old" v-show="food.oldPrice">{{food.oldPrice}}</span>
                             </div>
+                            <!-- 这个地方的问题 -->
+                            <!-- <div class="control-wrapper" > -->
                               <control :food='food'></control>
+                            <!-- </div> -->
                         </div>
                     </li>
                 </ul>
@@ -43,6 +46,7 @@
     <!-- 购物车组件 -->
       <shopcart :select-foods="selectFoods" :delivery-price='seller.deliveryPrice' :min-price='seller.minPrice'>
       </shopcart>
+      <food :food="selectFood" ref='foodDetail'></food>
 </div>
 </template>
 
@@ -50,6 +54,7 @@
 import BScroll from 'better-scroll'
 import shopcart from '../shopcart/ShopCart.vue'
 import control from '../cartcontrol/CartControl.vue'
+import food from '../food/Food.vue'
 export default {
   data () {
     return {
@@ -60,7 +65,8 @@ export default {
         require('./img/special_1@2x.png')
       ],
       listHeight: [],
-      scrollY: 0
+      scrollY: 0,
+      selectFood: {}
     }
   },
   created () {
@@ -94,12 +100,16 @@ export default {
       this.$http.get('data.json').then(res => {
         this.GoodsList = res.data.goods
         this.seller = res.data.seller
-        console.log(this.seller)
         this.$nextTick(() => {
           this.initScollMenu()
           this.calculateHeight()
         })
       })
+    },
+    clickFood (food) {
+      this.selectFood = food
+      // 显示food组件
+      this.$refs.foodDetail.show()
     },
     selectMenu (index) {
       const foodList = this.$refs.food.getElementsByClassName('food-list-hook')
@@ -144,7 +154,8 @@ export default {
   },
   components: {
     shopcart,
-    control
+    control,
+    food
   }
 
 }
