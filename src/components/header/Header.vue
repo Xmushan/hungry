@@ -90,7 +90,6 @@ export default {
     return {
       seller: {},
       detailShow: false,
-      // Vue 的 大坑
       // 当动态绑定img的src的时候，vue数据绑定图片的相对路径或者是绝对路径的时候，需要require路径
       imgPath: [
         require('./img/decrease_1@2x.png'),
@@ -108,7 +107,7 @@ export default {
     getSeller () {
       this.$http.get('data.json').then(res => {
         this.seller = res.data.seller
-        console.log(this.seller)
+        console.log(res)
       })
     }
   }

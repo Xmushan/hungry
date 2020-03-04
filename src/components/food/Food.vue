@@ -82,7 +82,7 @@ export default {
   data () {
     return {
       showFlag: false,
-      onlyContent: false,
+      onlyContent: true,
       selectType: ALL
     }
   },
@@ -116,7 +116,7 @@ export default {
     },
     needShow (type, text) {
       if (this.onlyContent && !text) {
-        return false
+        return true
       }
       if (this.selectType === ALL) {
         return true
