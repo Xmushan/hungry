@@ -47,15 +47,22 @@
             </ul>
           </div>
           <split></split>
-          <div class="pics">
+          <div class="pics" >
             <h1 class="title">商家实景</h1>
-            <div class="pic-wrapper" ref="pics">
-              <ul class="pic-list">
+            <div class="pic-wrapper" ref="picWrapper">
+              <ul class="pic-list" ref="picList">
                 <li class="pic-item" v-for="(pic,index) in seller.pics" :key="index">
                   <img width="120px" height="90px" :src="pic" alt="">
                 </li>
               </ul>
             </div>
+          </div>
+          <split></split>
+          <div class="info">
+            <h1>商家信息</h1>
+            <ul>
+              <li class="info-item" v-for="(info,index) in seller.infos" :key="index">{{info}}</li>
+            </ul>
           </div>
         </div>
     </div>
@@ -98,12 +105,18 @@ export default {
       })
     },
     initScroll  () {
-      this.pics = new BScroll(this.$refs.pics, {
-        click: true,
-        scrollX: true
-      })
       this.seller = new BScroll(this.$refs.seller, {
         click: true
+      })
+      const liWidth = 120
+      const space = 6
+      const ul = this.$refs.picWrapper.children[0]
+      const liCount = ul.children.length
+      ul.style.width = liCount * (liWidth + space) - space + 'px'
+
+      this.picWrapper = new BScroll(this.$refs.picWrapper, {
+        click: true,
+        scrollX: true
       })
     },
     toggle () {
@@ -268,6 +281,25 @@ export default {
             margin: 0;
           }
         }
+      }
+    }
+  }
+  .info{
+    padding: 18px 18px 0 18px;
+    color: rgb(7, 17, 27);
+    .title{
+      padding-bottom: 12px;
+      line-height: 14px;
+      border-bottom: 1px solid rgba(7, 17, 27, 0.1);
+      font-size: 14px;
+    }
+    .info-item{
+      padding: 16px 12px;
+      line-height: 16px;
+      border-bottom: 1px solid rgba(7, 17, 27, 0.1);
+      font-size: 12px;
+      &:last-child{
+        border: none;
       }
     }
   }
